@@ -1,0 +1,10 @@
+{
+    "0": "Text Categorization: \n \nDiscriminative Classifiers (Part 1)\n \n \n\n \nDepartment of Computer Science\n \nUniversity of Illinois at Urbana\n-\nChampaign\n \n1\n \n",
+    "1": "Overview\n \n\nWhat is text categorization?\n \n\nWhy text categorization?\n \n\n \nHow to do text categorization?\n \n\nGenerative probabilistic models\n \n\nDiscriminative approaches\n \n\nHow to evaluate categorization results? \n \n \n2\n \n",
+    "2": "Anatomy of Na\u00efve Bayes Classifier\n \n3\n \nTwo categories: \n\n1\n \nand \n\n2\n \n \nSum over all words \n \n(features {x\ni\n} )\n \nWeight on each\n \nword (feature) \n\ni\n \n \nCategory bias (\n\n0\n)\n \n\n \nGeneralize\n \n= Logistic Regression!\n \n \n   \nFeature value: x\ni\n=c(\nw,d\n)\n \n",
+    "3": "Discriminative Classifier 1: Logistic Regression\n \n4\n \nBinary Response Variable: Y \n\n{0,1} \n \nPredictors:\n \nModeling p(Y|X) directly\n \nAllow many other features than words!\n \nP(Y=1|X)\n \nX\n \n1.0\n \n",
+    "4": "Estimation of Parameters\n \n\n\n \n\nParameters: \n \n\nConditional likelihood:\n \n \n \n \n \n\nMaximum Likelihood estimate\n \n5\n \nY\ni \n=1\n \nY\ni \n=0\n \n\n \n",
+    "5": "6\n \nDiscriminative Classifier 2: K\n-\nNearest Neighbors (K\n-\nNN)\n \n\nFind k examples in the training \nset \nthat are most similar to \nthe \ntext object\n \n\n \n\nAssign the category that is most common in these neighbor \ntext objects\n \n(neighbors vote for the category)\n \n\nCan be improved by considering the distance of a neighbor (a \ncloser neighbor has more influence)\n \n\nCan be regarded as a way to directly estimate the conditional \nprobability of label given data instance, i.e., p(Y|X)\n \n\nNeed a similarity function to measure similarity of two text \nobjects\n \n",
+    "6": "7\n \nIllustration of K\n-\nNN Classifier\n \n \n(k=1)\n \n \n \n(k=4) \n \n \n",
+    "7": "8\n \nK\n-\nNN as an Estimate of p(Y|X)\n \nAssume p(\n\ni\n|d\n) is \nlocally smooth\n, i.e., \n \n\n \np(\n\ni\n|d\n)=\n \np(\n\ni\n|R\n) \n \nEstimate \np(\n\ni\n|R\n) based on\n \nthe known categories in the region\n \n\n \nwith category \n\ni\n \nTotal # of \n \nd\nocs in R\n \n"
+}
