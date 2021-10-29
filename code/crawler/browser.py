@@ -22,7 +22,7 @@ options.add_argument("user-data-dir=selenium")
 driver = webdriver.Chrome('./chromedriver', chrome_options=options)
 
 try:
-	for w in range(13, 16):
+	for w in range(1, 13):
 		driver.get("https://www.coursera.org/learn/cs-410/home/week/" + str(w))
 		time.sleep(5)
 		try:
@@ -48,7 +48,7 @@ try:
 				try:
 					slides_href = WebDriverWait(driver, 10).until(
 						EC.presence_of_element_located((By.XPATH, '//button[child::span[contains(text(), "Download")]]/following-sibling::ul/li/a[descendant::span[contains(text(), "Lecture Slides")]]'))).get_attribute("href")
-					wget.download(transcript_href, out="../../data/slides/" + lesson_name + ".pdf")
+					wget.download(slides_href, out="../../data/slides/" + lesson_name + ".pdf")
 					time.sleep(10)
 				except:
 					print('No slides found for week: ' + str(w) + ", lecture: " + str(l + 1))	
