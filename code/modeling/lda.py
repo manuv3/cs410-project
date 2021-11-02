@@ -4,13 +4,11 @@ import corpus
 from pprint import pprint
 import os
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
 _model_path = os.path.abspath('../../tmp/lda')
 
-def build_lda(build_corpus):
-	if build_corpus:
-		corpus.build_corpus('../../data/transcripts')
+def build_lda(path = None):
+	if path:
+		corpus.build_corpus(path)
 
 	my_corpus = corpus.get_prebuilt_corpus()
 	my_dictionary = corpus.get_prebuilt_dictionary()

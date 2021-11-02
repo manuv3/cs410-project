@@ -1,0 +1,1 @@
+This directory contains "Gensim" generated indexes. Do not delete this directory. Contents can be deleted.

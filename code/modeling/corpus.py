@@ -1,8 +1,10 @@
 import nltk
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.corpus import stopwords
 from gensim.models import Phrases
 from gensim.corpora import Dictionary, MmCorpus
+from gensim.parsing.preprocessing import STOPWORDS
 import tempfile
 import os
 import re
@@ -25,8 +27,9 @@ def _get_docs(path):
 def _tokenize_doc(doc):
 	doc = doc.lower()  # Convert to lowercase.
 	doc = _tokenizer.tokenize(doc)  # Split into words.
-	doc = [token for token in doc if token not in _stoplist]
-	doc = [token for token in doc if not token.isnumeric()] 
+	doc = [token for token in doc if token not in stopwords.words('english')]
+	doc = [token for token in doc if token not in STOPWORDS]
+	doc = [token for token in doc if not token.isnumeric()]
 	doc = [token for token in doc if len(token) > 1]
 	return [_lemmatizer.lemmatize(topic) for topic in doc]
 
@@ -34,16 +37,13 @@ def _tokenize(path):
 	for doc in _get_docs(path):
 	  yield _tokenize_doc(doc)
 
-
-# def _add_phrases()
-# for doc in _tokenize():
-# 	bigram = Phrases(_tokenize(), min_count=20)
-# for idx in range(len(docs)):
-#     for token in bigram[docs[idx]]:
-#         if '_' in token:
-#             # Token is a bigram, add to document.
-#             docs[idx].append(token)
-
+def _add_phrases(docs_path, tokens_file):
+	bigram = Phrases(_get_docs(docs_path), min_count=1)
+	for doc in (re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()):
+	  for token in bigram[doc]:
+	  	if '_' in token:
+	  		doc.append(token) # Token is a bigram, add to document.
+	  yield doc
 
 def _corpus_generator(tokens_file, dictionary):
 	for doc in (re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()):
@@ -56,15 +56,10 @@ def build_corpus(path):
 			fp.write(','.join(doc))
 			fp.write(os.linesep)
 		fp.seek(0)
-		dictionary = Dictionary(re.sub(os.linesep, '', line).split(',') for line in fp.readlines())
+		dictionary = Dictionary(_add_phrases(path, fp))
 		dictionary.save(_dictionary_path)
 		fp.seek(0)
 		MmCorpus.serialize(_corpus_path, _corpus_generator(fp, dictionary))
-
-def get_corpus(filename):
-	my_dictionary = get_prebuilt_dictionary()
-	with smart_open.open(filename, "rt") as doc:
-		return my_dictionary.doc2bow(_tokenize_doc(doc.read()))
 
 def get_prebuilt_dictionary():
 	return Dictionary.load(_dictionary_path)	
