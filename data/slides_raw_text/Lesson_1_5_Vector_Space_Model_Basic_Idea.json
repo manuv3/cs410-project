@@ -1,0 +1,8 @@
+{
+    "0": "1\n \nVector Space Retrieval Model: Basic Idea\n \n \nChengXiang\n \n\n \nDepartment of Computer Science\n \nUniversity of Illinois at Urbana\n-\nChampaign\n \n",
+    "1": "Course Schedule\n \n2\n \nBig Text Data\n \nSmall Relevant Data\n \n  \nSearch Engine\n \nRecommender \n \nSystem\n \n2. Text Access\n \n11. Recommendation\n \n3. Text Retrieval Problem\n \n10. Web Search\n \nUser\n \n1. Natural Language Content Analysis\n \n4. Text Retrieval Methods\n \n7. Evaluation \n \n6. System \n \nImplementation\n \n5. Vector Space Model\n \n8. Probabilistic Model \n \n9. Feedback  \n \n",
+    "2": "Many Different Retrieval Models\n \n\nSimilarity\n-\nbased models: f(\nq,d\n) = similarity(\nq,d\n)\n \n\nVector space model \n \n \n \n3\n \n",
+    "3": "4\n \nVector Space Model (VSM): Illustration\n \nLibrary\n \nPresidential\n \nProgramming\n \nd\n2\n \n?\n \nd\n1 \n \n?\n \nd\n3\n \n?\n \n \nQuery q  \n \nd\n4\n \nd\n5\n \nd\nM\n \n",
+    "4": "VSM Is a Framework\n \n\nRepresent a doc/query by a term vector\n \n\nTerm\n: basic concept, e.g., word or phrase\n \n\nEach term defines one dimension\n \n\nN terms define an \nN\n-\ndimensional space\n \n\nQuery\n \nv\nector: \nq\n=(\nx\n1\n\nN\n), \nx\ni\n\n \nis query term weight\n \n\nDoc\n \nvector: \nd\n=(\ny\n1\n, \n\ny\nN\n), \ny\nj\n\n \nis doc term weight\n \n \n\nr\nelevance(\nq,d\n) \n\n \nsimilarity(\nq\n,\nd\n) =f(\nq,d\n)\n \n5\n \n",
+    "5": "\n \n\n\n \n\nConcepts are assumed to be orthogonal\n \n\nHow to place docs and query in the space (= how to \nassign term weights)\n \n\nTerm weight in query indicates importance of term\n \n\nTerm w\neight in doc indicates how well the term \ncharacterizes the doc\n \n\nHow to define the similarity measure\n \n6\n \n"
+}
