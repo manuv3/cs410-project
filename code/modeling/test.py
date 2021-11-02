@@ -28,7 +28,8 @@ for doc in my_corpus:
 	idx += 1
 	output[doc_name] = []
 	for key, value in my_lda[doc]:
-		output[doc_name].append(my_lda.print_topic(key))
+		output[doc_name].append(my_lda.print_topic(key, topn = 50))
 
 for key, value in output.items():
     print('{} ==> {}'.format(key, value))
+    print('================================')
