@@ -8,10 +8,10 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 _corpus_path = os.path.abspath('../../data/transcripts')
 
 # Build model without building corpus again
-# my_lda = lda.build_lda()
+#my_lda = lda.build_lda()
 
 # Build corpus and model
-# my_lda = lda.build_lda(_corpus_path)
+#my_lda = lda.build_lda(_corpus_path)
 
 # Get pre built model
 my_lda = lda.get_prebuilt_model()
