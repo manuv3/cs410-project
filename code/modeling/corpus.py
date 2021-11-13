@@ -2,7 +2,7 @@ import nltk
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
-from gensim.models import Phrases
+from gensim.models.phrases import Phrases, ENGLISH_CONNECTOR_WORDS
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.parsing.preprocessing import STOPWORDS
 import tempfile
@@ -37,15 +37,19 @@ def _tokenize(path):
 	for doc in _get_docs(path):
 	  yield _tokenize_doc(doc)
 
-def _add_phrases(docs_path, tokens_file):
-	bigram = Phrases(_get_docs(docs_path), min_count=1)
-	for doc in (re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()):
-	  for token in bigram[doc]:
-	  	if '_' in token:
-	  		doc.append(token) # Token is a bigram, add to document.
-	  yield doc
+# def _add_phrases(docs_path, tokens_file):
+# 	bigram = Phrases(_get_docs(docs_path), min_count=1, threshold = 1, connector_words=ENGLISH_CONNECTOR_WORDS)
+# 	for doc in (re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()):
+# 	  for token in bigram[doc]:
+# 	  	if '_' in token:
+# 	  		print(token)
+# 	  		doc.append(token) # Token is a bigram, add to document.
+# 	  yield doc
 
-def _corpus_generator(tokens_file, dictionary):
+def _generate_dict(tokens_file):
+	return Dictionary([re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()])
+
+def _generate_corpus(tokens_file, dictionary):
 	for doc in (re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()):
 		yield dictionary.doc2bow(doc)
 
@@ -56,10 +60,10 @@ def build_corpus(path):
 			fp.write(','.join(doc))
 			fp.write(os.linesep)
 		fp.seek(0)
-		dictionary = Dictionary(_add_phrases(path, fp))
+		dictionary = _generate_dict(fp)
 		dictionary.save(_dictionary_path)
 		fp.seek(0)
-		MmCorpus.serialize(_corpus_path, _corpus_generator(fp, dictionary))
+		MmCorpus.serialize(_corpus_path, _generate_corpus(fp, dictionary))
 
 def get_prebuilt_dictionary():
 	return Dictionary.load(_dictionary_path)	

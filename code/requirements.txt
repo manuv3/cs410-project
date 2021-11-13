@@ -1,2 +1,5 @@
 gensim
 nltk
+matplotlib
+tabulate
+numpy
