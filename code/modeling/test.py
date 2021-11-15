@@ -7,7 +7,7 @@ from pprint import pprint
 import numpy as nm
 from tabulate import tabulate
 from gensim.models.coherencemodel import CoherenceModel
-from matplotlib import pyplot
+from matplotlib import pyplot																																																																														
 
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.WARN)
@@ -15,19 +15,24 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 _corpus_path = os.path.abspath('../../data/transcripts')
 
 # Build model without building corpus again
-model = lda.build_lda(ntop=10)
+#model = lda.build_lda(ntop=10)
 
 # Build corpus and model
 #model = lda.build_lda(_corpus_path)
 
 # Get pre built model
-#model = lda.get_prebuilt_model()
+model = lda.get_prebuilt_model()
 
 # Get pre-built LSI model
 #model = lsi.get_prebuilt_model()
 
 # Get pre built corpus
 my_corpus = corpus.get_prebuilt_corpus()
+
+# Get pre-built dictionary
+my_dictionary = corpus.get_prebuilt_dictionary()
+#temp = my_dictionary[0]  # This is only to "load" the dictionary.
+#id2word = my_dictionary.id2token
 
 
 # top_topics = model.top_topics(corpus.get_prebuilt_corpus())
@@ -78,6 +83,7 @@ for prob, topic in model.show_topics(formatted = False, num_words = 20):
 	topic_arr.append(['topic_' + str(topic_ctr), ' '.join(words)])
 
 print(tabulate(topic_arr, tablefmt='fancy_grid'))
+
 
 #print(model.show_topics(formatted = False))
 

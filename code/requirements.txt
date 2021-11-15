@@ -3,3 +3,4 @@ nltk
 matplotlib
 tabulate
 numpy
+pyLDAvis
