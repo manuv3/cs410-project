@@ -10,6 +10,7 @@ from gensim.models.word2vec import Text8Corpus
 import tempfile
 import os
 import re
+import json
 
 nltk.data.path = [os.path.abspath('../../data/nltk_data')] + nltk.data.path
 _tokenizer = RegexpTokenizer(r'\w+')
@@ -20,12 +21,20 @@ _local_docs_path = os.path.abspath('../../data/transcripts')
 _dictionary_path = os.path.abspath('../../tmp/dictionary.dict')
 _corpus_path = os.path.abspath('../../tmp/corpus.mm')
 _phrases_path = os.path.abspath('../../tmp/phrases.pkl')
+_data_path = os.path.abspath('../../data')
 
 def _get_docs(path):
-  for root, dirs, files in os.walk(path):
-    for name in files:
-      with open(os.path.join(root, name), 'r') as doc:
-      	yield doc.read()
+	if os.path.isfile(path):
+		with open(path, 'r') as doc:
+			yield doc.read()
+	else:			
+		for root, dirs, files in os.walk(path):
+			for name in files:
+				with open(os.path.join(root, name), 'r') as doc:
+					if name.endswith('.json'):
+						yield ' '.join([value for key, value in json.loads(doc.read()).items() if key != '0'])
+					else:		
+						yield doc.read()
 
 def _tokenize_doc(doc):
 	doc = re.sub('\n', ' ', doc)
@@ -41,13 +50,13 @@ def _tokenize(path):
 	for doc in _get_docs(path):
 	  yield _tokenize_doc(doc)
 
-def _get_sentences(path):
+def get_sentences(path):
 	for doc in _get_docs(path):
 		for sentence in _sentence_tokenizer.tokenize(doc):
 			yield _tokenize_doc(sentence)
 
 def _generate_phrases(path):
-	return Phrases(_get_sentences(path), min_count=5, connector_words=ENGLISH_CONNECTOR_WORDS)
+	return Phrases(get_sentences(path), min_count=5, connector_words=ENGLISH_CONNECTOR_WORDS)
 
 def _generate_dict(tokens_file):
 	return Dictionary([re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()])
@@ -57,18 +66,29 @@ def _generate_corpus(tokens_file, dictionary):
 		yield dictionary.doc2bow(doc)
 
 
-def build_corpus(path, build_phrases = True):
+def build_corpus(build_phrases = True):
+	phrases = None
+	if (build_phrases):
+			phrases = _generate_phrases(os.path.join(_data_path, 'transcripts')).freeze()
+			phrases.save(_phrases_path)
+
 	with tempfile.TemporaryFile(mode = 'w+t') as fp:
-		for doc in _tokenize(path):
-			fp.write(','.join(doc))
-			fp.write(os.linesep)
+		for path in [os.path.join(_data_path, 'transcripts'), os.path.join(_data_path, 'slides_raw_text')]:
+			for doc in _tokenize(path):
+				fp.write(','.join(doc))
+				fp.write(os.linesep)
+		if (build_phrases):
+			fp.seek(0)
+			for root, dirs, files in os.walk(os.path.join(_data_path, 'transcripts')):
+				for name in files:
+					sentences = get_sentences(os.path.join(root, name))
+					for phrase in phrases[sentences]:
+						re.sub(os.linesep, '', fp.readline()).split(',').append(phrase)
 		fp.seek(0)
 		dictionary = _generate_dict(fp)
 		dictionary.save(_dictionary_path)
 		fp.seek(0)
 		MmCorpus.serialize(_corpus_path, _generate_corpus(fp, dictionary))
-		if (build_phrases):
-			_generate_phrases(path).freeze().save(_phrases_path)
 
 
 def get_prebuilt_dictionary():
@@ -79,6 +99,3 @@ def get_prebuilt_corpus():
 
 def get_prebuilt_phrases():
 	return Phrases.load(_phrases_path)
-
-
-#print(_generate_phrases('../../data/transcripts').export_phrases())
