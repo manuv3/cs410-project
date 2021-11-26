@@ -63,11 +63,7 @@ def get_sentences(path):
 			yield _tokenize_doc(sentence)
 
 def _generate_phrases(path):
-<<<<<<< HEAD
-	return Phrases(_get_sentences(path), min_count=5)
-=======
 	return Phrases(get_sentences(path), min_count=5, connector_words=ENGLISH_CONNECTOR_WORDS)
->>>>>>> 4d35b0be29d5d55542f3cc7f831d39b3e4005b11
 
 def _generate_dict(tokens_file):
 	return Dictionary([re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()])

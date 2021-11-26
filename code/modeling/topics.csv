@@ -1,10 +1,11 @@
-topic_0,topic parameter theta sub generate plsa generating probabilistic compute clustering lda estimation lambda pi generative normalize unigram maximize constraint estimator posterior
-topic_1,w1 w2 topic sensor retrieval zhai contextual eats acm mei chengxiang analytics syntagmatic entropy actionable doi predictor pp kdd latent qiaozhu predictive sigir
-topic_2,reviewer filtering user latent regression preference parameter beta sub alpha predict weighted wang personalized inaudible infer gamma solving versus
-topic_3,user ranked categorization ranking methodology retrieval query compute inaudible quantify topic algorithm comparing
-topic_4,categorization classifier topic parameter regression discriminative beta domain optimize constraint xi logistic noun scoring separator logistical
-topic_5,topic clustering similarity lm categorization algorithm plsa probabilistic generative causal
-topic_6,query user retrieval feedback ranking web inverted d2 id bm25 idf d3 recommender similarity compute algorithm tf
-topic_7,entropy algorithm conditional clustering eats web pagerank similarity compute predict em surfer matrix metric scenario syntagmatic converge randomly
-topic_8,d1 d2 eats retrieval q1 similarity d3 noun paradigmatic nlp query syntagmatic verb idf d4 chasing tf dcg bm25 parsing vsm q2 sim d5 syntactic discovering playground tagging weighting probabilistic __
-topic_9,user smoothing query idf normalization filtering weighting tf similarity mapreduce logarithm preference coefficient retrieval sub collaborative hadoop ranking heuristic unseen bye programmer chunk alpha web interpolation behm gfs java indexing
+topic_0,topic parameter theta sub generate smoothing generating compute probabilistic algorithm lambda pi maximize plsa normalize generative query constraint
+topic_1,entropy conditional eats predict syntagmatic w1 scenario compute pseudo discovering w2 biased
+topic_2,topic classifier contextual separator constraint plsa retrieval predictor optimize generate
+topic_3,query idf ranking retrieval tf weighting bm25 normalization similarity compute ranked d3 user d2 heuristic
+topic_4,query user retrieval feedback web ranking algorithm scoring inverted filtering
+topic_5,parameter similarity reviewer classifier paradigmatic regression eats beta syntagmatic sub logistical predict compute discovering weighted latent query
+topic_6,user id surfer filtering unary similarity coding pagerank metric d1 preference integer matrix parsing inverted collaborative gamma web decode compute encoded citation algorithm sub
+topic_7,clustering similarity algorithm bias matrix generate baseline pagerank transpose iteratively ass
+topic_8,topic user browsing dcg causal correlated query versus ranked connect
+topic_9,tag discriminative polarity overfitting parse biologist gene enrich misspell exhaustivity discriminating generalize infrequent thesaurus robust enriches characterize ontology generate syntactic classify categorization
+topic_10,categorization retrieval nlp topic semantic algorithm robust domain infer email
