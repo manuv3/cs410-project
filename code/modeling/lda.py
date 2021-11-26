@@ -1,6 +1,6 @@
 import logging
 from gensim.models import LdaModel
-import corpus
+import corpus as corpus
 from pprint import pprint
 import os
 from gensim.models.coherencemodel import CoherenceModel
@@ -16,7 +16,11 @@ def build_lda(path = None, ntop = num_topics, save_model = True):
 
 	my_corpus = corpus.get_prebuilt_corpus()
 	my_dictionary = corpus.get_prebuilt_dictionary()
-	temp = my_dictionary[0]  # This is only to "load" the dictionary.
+	try:
+		temp = my_dictionary[0]  # This is only to "load" the dictionary.
+	except Exception as e:
+		print(e)
+
 	id2word = my_dictionary.id2token
 
 	# Set training parameters.
@@ -49,19 +53,19 @@ def get_prebuilt_model():
 	return LdaModel.load(_model_path)
 
 
-#for ntop in range(10, 26):
-#cm_11 = CoherenceModel(model=build_lda(ntop = 11, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
-#cm_18 = CoherenceModel(model=build_lda(ntop = 18, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
+for ntop in range(10, 26):
+	cm_11 = CoherenceModel(model=build_lda(ntop = 11, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
+	cm_18 = CoherenceModel(model=build_lda(ntop = 18, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
 
 
 #pyplot.plot(range(10, 26), coherence)
 #pyplot.show()
 
 
-# lda_11 = build_lda(ntop = 11)
-# top_topics = lda_11.top_topics(corpus.get_prebuilt_corpus())
+lda_11 = build_lda(ntop = 11)
+top_topics = lda_11.top_topics(corpus.get_prebuilt_corpus())
 # # Average topic coherence is the sum of topic coherences of all topics, divided by the number of topics.
-# avg_topic_coherence = sum([t[1] for t in top_topics]) / 11
-# print('Average topic coherence: %.4f.' % avg_topic_coherence)
+avg_topic_coherence = sum([t[1] for t in top_topics]) / 11
+print('Average topic coherence: %.4f.' % avg_topic_coherence)
 
-# pprint(top_topics)
+pprint(top_topics)

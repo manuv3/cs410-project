@@ -1,6 +1,6 @@
 import lda
 import lsi
-import corpus
+#import corpus
 import os
 import logging
 from pprint import pprint

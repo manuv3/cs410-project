@@ -3,13 +3,20 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize.punkt import PunktSentenceTokenizer
-from gensim.models.phrases import Phrases, ENGLISH_CONNECTOR_WORDS
+from gensim.models.phrases import Phrases
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.parsing.preprocessing import STOPWORDS
 from gensim.models.word2vec import Text8Corpus
 import tempfile
 import os
 import re
+
+ENGLISH_CONNECTOR_WORDS = frozenset(
+    " a an the "  # articles; we never care about these in MWEs
+    " for of with without at from to in on by "  # prepositions; incomplete on purpose, to minimize FNs
+    " and or "  # conjunctions; incomplete on purpose, to minimize FNs
+    .split()
+)
 
 nltk.data.path = [os.path.abspath('../../data/nltk_data')] + nltk.data.path
 _tokenizer = RegexpTokenizer(r'\w+')
@@ -47,7 +54,7 @@ def _get_sentences(path):
 			yield _tokenize_doc(sentence)
 
 def _generate_phrases(path):
-	return Phrases(_get_sentences(path), min_count=5, connector_words=ENGLISH_CONNECTOR_WORDS)
+	return Phrases(_get_sentences(path), min_count=5)
 
 def _generate_dict(tokens_file):
 	return Dictionary([re.sub(os.linesep, '', line).split(',') for line in tokens_file.readlines()])
@@ -81,4 +88,4 @@ def get_prebuilt_phrases():
 	return Phrases.load(_phrases_path)
 
 
-#print(_generate_phrases('../../data/transcripts').export_phrases())
+print(_generate_phrases('../../data/transcripts').export_phrases())
