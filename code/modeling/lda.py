@@ -10,9 +10,9 @@ _model_path = os.path.abspath('../../tmp/lda')
 
 num_topics = 20
 
-def build_lda(path = None, ntop = num_topics, save_model = True):
-	if path:
-		corpus.build_corpus(path)
+def build_lda(build_corpus = False, ntop = num_topics, save_model = True):
+	if build_corpus:
+		corpus.build_corpus()
 
 	my_corpus = corpus.get_prebuilt_corpus()
 	my_dictionary = corpus.get_prebuilt_dictionary()

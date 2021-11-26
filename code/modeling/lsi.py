@@ -10,9 +10,9 @@ _model_path = os.path.abspath('../../tmp/lsi')
 
 num_topics = 20
 
-def build_lsi(path = None, ntop = num_topics, save_model = True):
-	if path:
-		corpus.build_corpus(path)
+def build_lsi(build_corpus = False, ntop = num_topics, save_model = True):
+	if build_corpus:
+		corpus.build_corpus()
 
 	my_corpus = corpus.get_prebuilt_corpus()
 	my_dictionary = corpus.get_prebuilt_dictionary()
@@ -38,6 +38,3 @@ def build_lsi(path = None, ntop = num_topics, save_model = True):
 
 def get_prebuilt_model():
 	return LsiModel.load(_model_path)
-
-
-build_lsi(ntop=11, save_model=True)
