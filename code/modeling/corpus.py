@@ -20,6 +20,8 @@ ENGLISH_CONNECTOR_WORDS = frozenset(
     .split()
 )
 
+CORPUS_SPECIFIC_STOPWORDS = {'lecture', 'sound', 'music'}
+
 nltk.data.path = [os.path.abspath('../../data/nltk_data')] + nltk.data.path
 _tokenizer = RegexpTokenizer(r'\w+')
 _sentence_tokenizer = PunktSentenceTokenizer()
@@ -44,7 +46,18 @@ def _get_doc(file):
 			if file.endswith('.json'):
 				return ' '.join([value for key, value in json.loads(doc.read()).items() if key != '0'])
 			else:
-				return doc.read()	
+				return doc.read()
+
+def slide_words(path):
+	with open(path) as file:
+		data = json.loads(file)
+		last_slide = data[len(data) - 1]
+		if 'Additional Reading' in last_slide:
+			last_slide = ''
+		last_slide = last_slide.replace('Topics Covered in This Course', '')
+		last_slide = last_slide.replace('Summary', '')
+		data[len(data) - 1] = last_slide
+		yield ' '.join([value for key, value in data.items() if key != '0'])
 
 def _tokenize_doc(doc):
 	doc = re.sub('\n', ' ', doc)
@@ -52,6 +65,7 @@ def _tokenize_doc(doc):
 	doc = _tokenizer.tokenize(doc)  # Split into words.	
 	doc = [token for token in doc if token not in stopwords.words('english')]
 	doc = [token for token in doc if token not in STOPWORDS]
+	doc = [token for token in doc if token not in CORPUS_SPECIFIC_STOPWORDS]
 	doc = [token for token in doc if not token.isnumeric()]
 	doc = [token for token in doc if len(token) > 2]
 	return [_lemmatizer.lemmatize(topic) for topic in doc]
