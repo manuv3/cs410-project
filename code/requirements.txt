@@ -5,5 +5,3 @@ tabulate
 numpy
 pyLDAvis
 flask
-matplotlib
-mako

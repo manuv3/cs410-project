@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from topics import LdaBasedModel
 
 app = Flask(__name__)
@@ -49,5 +49,13 @@ def topics_for_document(doc_id):
 	term_count = int(request.args.get('terms', '10'))
 	topic_threshold = float(request.args.get('topic_threshold', '0.2'))
 	topics = model_objs[curr_model_idx].get_topics_for_doc(doc_id, topic_threshold = topic_threshold, term_count = term_count)
-	print(topics)
 	return jsonify(topics)
+
+@app.route('/documents/<int:doc_id>/ui')
+def document_ui(doc_id):
+	topic_threshold = float(request.args.get('topic_threshold', '0.2'))
+	return render_template('lesson_page.html', doc_id = doc_id, topic_threshold = topic_threshold)
+
+@app.route('/topics/ui')
+def topic_summary_ui():
+	return render_template('topic_summary.html', model_names = model_names, current_model = curr_model_idx)
