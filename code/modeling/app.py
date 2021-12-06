@@ -5,9 +5,11 @@ app = Flask(__name__)
 
 
 lda_model = LdaBasedModel()
-curr_model = lda_model
 
 model_names = ['LdaBasedModel']
+model_objs = [lda_model]
+
+curr_model_idx = 0
 
 @app.route("/models")
 def models():
@@ -19,6 +21,13 @@ def models():
 		model_obj['name'] = model
 		models_arr.append(model_obj)
 	return jsonify(models_arr)
+
+@app.route("/models/current")
+def current_model():
+	model_obj = {}
+	model_obj['id'] = curr_model_idx
+	model_obj['name'] = model_names[curr_model_idx]
+	return model_obj
 
 
 @app.route("/topics")
