@@ -44,7 +44,7 @@ X_train_wtv = wtv_vect.transform(sample)
 print(X_train_wtv.shape)
 
 km = KMeans(
-    n_clusters=20, init='random',
+    n_clusters=16, init='random',
     n_init=10, max_iter=300,
     tol=1e-04, random_state=0
 )
