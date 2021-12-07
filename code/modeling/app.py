@@ -53,8 +53,7 @@ def topics_for_document(doc_id):
 
 @app.route('/documents/<int:doc_id>/ui')
 def document_ui(doc_id):
-	topic_threshold = float(request.args.get('topic_threshold', '0.2'))
-	return render_template('lesson_page.html', doc_id = doc_id, topic_threshold = topic_threshold)
+	return render_template('lesson_page.html', doc_id = doc_id)
 
 @app.route('/topics/ui')
 def topic_summary_ui():
