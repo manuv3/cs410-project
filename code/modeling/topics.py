@@ -9,8 +9,7 @@ from gensim.models.coherencemodel import CoherenceModel
 from matplotlib import pyplot
 from nltk import FreqDist
 from nltk.corpus import brown, reuters
-from math import log
-import csv																																																										
+from math import log																																																							
 
 class LdaBasedModel:
 
@@ -28,15 +27,15 @@ class LdaBasedModel:
 	_my_corpus = corpus.get_prebuilt_corpus()
 
 	#************* Model Parameters ********************* 
-	_relevance_parameter = 0.4
+	_relevance_parameter = None
+
+	_topic_count = None
 
 	_num_terms_per_topic_before_processing = 100
 
 	_num_terms_per_topic_after_processing = 20
 
 	_background_word_max_frequency = 30
-
-	_topic_min_threshold_per_doc = 0.3
 	#****************************************************
 
 	_terms_per_topic = []
@@ -45,11 +44,14 @@ class LdaBasedModel:
 
 	_topics_identifier = {}
 
-	def __init__(self, build_model = False, topic_count = 16):
+	def __init__(self, build_model = False, topic_count = 16, relevance_parameter = 0.4):
 		if build_model:
 			self._model = lda.build_lda(ntop = topic_count)
 		else:
 			self._model = lda.get_prebuilt_model()
+
+		self._relevance_parameter = relevance_parameter
+		self._topic_count = topic_count	
 
 		# Background language models
 		_brown_text = brown.words()
@@ -57,13 +59,9 @@ class LdaBasedModel:
 		_reuters_text = reuters.words()
 		_reuters_fdist = FreqDist(w.lower() for w in _reuters_text)
 
-
-		topic_matrix = self._model.get_topics()
-		topic_size, vocab_size = topic_matrix.shape
-
 		# Topics and contained terms, after filtering high frequency background words
 		idx = 0
-		for prob, topic in self._model.show_topics(num_topics = topic_size, formatted = False, num_words = self._num_terms_per_topic_before_processing):
+		for prob, topic in self._model.show_topics(num_topics = self._topic_count, formatted = False, num_words = self._num_terms_per_topic_before_processing):
 			self._topics_identifier[idx] = 'topic_' + str(idx + 1)
 			idx += 1
 			words = []
@@ -96,12 +94,13 @@ class LdaBasedModel:
 		topic['terms'] = self._terms_per_topic[topic_id][0: term_count]
 		return topic	
 
-	def get_topics_for_doc(self, doc_id, topic_threshold = 0, term_count = 10):
-		topics_in_doc = self._get_topics_for_doc_internal(doc_id, topic_threshold)
+	def get_topics_for_doc(self, doc_id, term_count = 10):
+		topics_in_doc = self._get_topics_for_doc_internal(doc_id)
 		doc_topics = {}
 		doc_topics['id'] = doc_id
 		doc_topics['name'] = self._docs[doc_id]
 		doc_topics['topics'] = []
+		topics_present_in_doc = set()
 		for topic, prob in topics_in_doc:
 			tmp_obj = {}
 			tmp_obj['id'] = topic
@@ -109,6 +108,16 @@ class LdaBasedModel:
 			tmp_obj['coverage'] = str(prob)
 			tmp_obj['terms'] = self._get_terms_for_doc_topic(doc_id, topic, term_count)
 			doc_topics['topics'].append(tmp_obj)
+			topics_present_in_doc.add(topic)
+		for idx, name in self._topics_identifier.items():
+			if idx not in topics_present_in_doc:
+				tmp_obj = {}
+				tmp_obj['id'] = idx
+				tmp_obj['name'] = name
+				tmp_obj['coverage'] = '0'
+				tmp_obj['terms'] = []
+				doc_topics['topics'].append(tmp_obj)
+		doc_topics['topics'] = [topic_obj for topic_obj in sorted(doc_topics['topics'], key = lambda item: item['id'])]
 		return doc_topics
 
 	def get_docs(self):
@@ -120,8 +129,8 @@ class LdaBasedModel:
 			docs.append(doc)
 		return docs
 
-	def _get_topics_for_doc_internal(self, doc_id, topic_threshold):
-		return [(topic, prob) for topic, prob in sorted(self._model[self._my_corpus[doc_id]], key = lambda item: item[1], reverse = True) if prob >= topic_threshold]	
+	def _get_topics_for_doc_internal(self, doc_id):
+		return [(topic, prob) for topic, prob in sorted(self._model[self._my_corpus[doc_id]], key = lambda item: item[1], reverse = True)]	
 
 	def _get_terms_for_doc_topic(self, doc_id, topic_id, term_count):
 		doc_name = self._docs[doc_id]
