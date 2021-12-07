@@ -51,6 +51,11 @@
   			<div class="row" style="margin-top: 20px; margin-bottom: 20px;">
   				<div class="col" id="topicsDistribution">
   				</div>
+  				<div class="col" id="loadingTopicsDistribution">
+	  				<div class="spinner-border text-danger" role="status">
+					  <span class="visually-hidden">Loading...</span>
+					</div>
+				</div>
   			</div>
   			<div class="row" style="margin-top: 40px;">
   				<div class="col">
@@ -63,7 +68,12 @@
 					  <table class="table" id="termIndex">
 					  </table>
 					</div>
-  				</div>	
+  				</div>
+  				<div class="col" id="loadingTermIndex">
+	  				<div class="spinner-border text-danger" role="status">
+					  <span class="visually-hidden">Loading...</span>
+					</div>
+				</div>
   			</div>
   		</div>
 		{% block javascript %}
@@ -86,6 +96,10 @@
 					    if (httpRequest.readyState === XMLHttpRequest.DONE) {
 					      if (httpRequest.status === 200) {
 					      	documents = JSON.parse(httpRequest.responseText);
+					      	documentsContainer = document.getElementById('documents')
+					      	while (documentsContainer.firstChild) {
+							  documentsContainer.removeChild(documentsContainer.firstChild);
+							}
 							let select = document.createElement("select");
 							select.id = 'documentId'
 					      	select.className = 'form-select';
@@ -93,7 +107,7 @@
 					      	defaultOption.value = -1;
 					      	defaultOption.innerHTML = 'Select file name';
 					      	select.appendChild(defaultOption);
-					      	document.getElementById('documents').appendChild(select);
+					      	documentsContainer.appendChild(select);
 							for (i = 0; i < documents.length; i++) {
 					      		let doc = documents[i];
 			      				let option = document.createElement("option");
@@ -156,11 +170,15 @@
 		    		httpRequest.send();
 				}
 
-				function updateTopicDistribution() {
+				function updateTopicDistribution(retries = 20) {
+					document.getElementById('loadingTopicsDistribution').removeAttribute("hidden");
+					document.getElementById('loadingTermIndex').removeAttribute("hidden");
 					let httpRequest = new XMLHttpRequest();
 					httpRequest.onreadystatechange = function() {
 					    if (httpRequest.readyState === XMLHttpRequest.DONE) {
 					      if (httpRequest.status === 200) {
+					      	document.getElementById('loadingTopicsDistribution').setAttribute("hidden", "hidden");
+					      	document.getElementById('loadingTermIndex').setAttribute("hidden", "hidden");
 					      	let index = JSON.parse(httpRequest.responseText);
 					      	let topicIndex = index['topic_index'];
 					      	let display_data = [];
@@ -192,6 +210,9 @@
 
 							let termIndex = index['term_index'];
 							let termIndexTable = document.getElementById('termIndex');
+							while (termIndexTable.firstChild) {
+							  termIndexTable.removeChild(termIndexTable.firstChild);
+							}
 							tbody = document.createElement("tbody");
 					      	termIndexTable.appendChild(tbody);
 							for (let term in termIndex) {
@@ -214,6 +235,10 @@
 					      		}
   							}
 
+					      } else if (httpRequest.status === 409) {
+					      	if (retries > 0) {
+					      		setTimeout(updateTopicDistribution, 5000, (retries - 1));
+					      	}
 					      } else {
 					        alert('There was a problem with the request.');
 					      }
