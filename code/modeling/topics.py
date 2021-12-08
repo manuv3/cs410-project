@@ -42,6 +42,8 @@ class LdaBasedModel:
 
 	_docs = {}
 
+	_docs_url = {}
+
 	_topics_identifier = {}
 
 	def __init__(self, build_model = False, topic_count = 16, relevance_parameter = 0.4):
@@ -80,6 +82,11 @@ class LdaBasedModel:
 			# Update doc names index
 			self._docs[idx] = doc_name
 			idx += 1
+		with open('../../data/lesson_urls.txt', 'r') as lesson_urls:
+			idx = 0
+			for url in lesson_urls:
+				self._docs_url[idx] = url.rstrip()
+				idx += 1
 
 	def get_topics(self, term_count = 10):
 		topics = []
@@ -126,6 +133,7 @@ class LdaBasedModel:
 			doc = {}
 			doc['id'] = doc_id
 			doc['name'] = doc_name
+			doc['url'] = self._docs_url[doc_id]
 			docs.append(doc)
 		return docs
 

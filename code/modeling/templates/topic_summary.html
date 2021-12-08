@@ -229,7 +229,11 @@
 				      				td.appendChild(ul);
 					      			for (let i = 0; i < termIndex[term].length; i++) {
 					      				let li = document.createElement('li');
-										li.textContent = termIndex[term][i];
+					      				let a = document.createElement('a');
+					      				a.href = termIndex[term][i]['url'];
+					      				a.innerHTML = termIndex[term][i]['name'];
+					      				a.target = '_blank';
+										li.appendChild(a);
 										ul.appendChild(li);
 					      			}
 					      		}
