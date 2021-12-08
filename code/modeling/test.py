@@ -1,11 +1,7 @@
 import lda
 import lsi
-<<<<<<< HEAD
-#import corpus
-=======
 import corpus
 import topics
->>>>>>> 2c68f4aeeef36dbda1007a642fb03eaecc8785ab
 import os
 import logging
 from pprint import pprint
@@ -16,7 +12,8 @@ from matplotlib import pyplot
 from nltk import FreqDist
 from nltk.corpus import brown, reuters
 from math import log
-import csv																																																																									
+import csv
+
 
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.WARN)
