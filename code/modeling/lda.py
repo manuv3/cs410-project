@@ -52,11 +52,11 @@ def build_lda(build_corpus = False, ntop = num_topics, save_model = True):
 def get_prebuilt_model():
 	return LdaModel.load(_model_path)
 
-
+'''
 for ntop in range(10, 26):
 	cm_11 = CoherenceModel(model=build_lda(ntop = 11, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
 	cm_18 = CoherenceModel(model=build_lda(ntop = 18, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
-
+'''
 
 #pyplot.plot(range(10, 26), coherence)
 #pyplot.show()

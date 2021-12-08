@@ -47,7 +47,6 @@ def _get_doc(file):
 				return ' '.join([value for key, value in json.loads(doc.read()).items() if key != '0'])
 			else:
 				return doc.read()
-
 def slide_words(path):
 	with open(path) as file:
 		data = json.loads(file)
