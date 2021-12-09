@@ -13,7 +13,7 @@ from word_to_vec import WordVecVectorizer, get_prebuilt_word2vec
 import numpy as np
 
 def load_data():
-    data = corpus._tokenize(corpus._local_docs_path)
+    data = corpus._tokenize(corpus.get_raw_corpus_path())
     data = [x for x in data]
     X_train = pd.DataFrame(data)
     return X_train
@@ -82,10 +82,10 @@ class CLusterModel(LdaBasedModel):
 
 
         # Build terms per document
-        file_names = open('../../tmp/file_order.txt', 'r').read().splitlines()
+        file_names = open('../../data/file_order.txt', 'r').read().splitlines()
         idx = 0
         for doc in self._my_corpus:
-            doc_name = file_names[idx].replace('"', '')
+            doc_name = file_names[idx]
             # Update doc names index
             self._docs[idx] = doc_name
             idx += 1
