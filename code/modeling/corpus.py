@@ -7,7 +7,6 @@ from gensim.models.phrases import Phrases, ENGLISH_CONNECTOR_WORDS
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.models import TfidfModel
 from gensim.parsing.preprocessing import STOPWORDS
-from gensim.models.word2vec import Text8Corpus
 import tempfile
 import os
 import re
