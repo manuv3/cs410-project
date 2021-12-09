@@ -1,25 +1,22 @@
 from flask import Flask, jsonify, request, render_template, abort
-from topics import LdaBasedModel
+from topics import LdaBasedModel, get_prebuilt_model
 import threading
-import indexer
+from model_factory import Factory
 
 
 app = Flask(__name__)
 
-def _index(model):
-	index_builder = indexer.Indexer(model)
-	indexer_thread = threading.Thread(target = index_builder.index)
-	indexer_thread.setDaemon(True)
-	indexer_thread.start()
-	return index_builder
+def _build_model(target):
+	model_builder = Factory()
+	builder_thread = threading.Thread(target = model_builder.build, args = (target,))
+	builder_thread.setDaemon(True)
+	builder_thread.start()
+	return model_builder	
 
-lda_model = LdaBasedModel()
 
-lda_model_indexer = _index(lda_model)
-
-indexers = [lda_model_indexer]
-model_names = ['LdaBasedModel']
-model_objs = [lda_model]
+# model_objs = [LdaBasedModel(model_path = 'lda'), LdaBasedModel(model_path = 'lda', relevance_parameter = 1.0), LdaBasedModel(model_path = 'lda_10', relevance_parameter = 0.4)]
+model_objs = [get_prebuilt_model('model_0.obj'), get_prebuilt_model('model_1.obj'), get_prebuilt_model('model_2.obj')]
+model_names = ['Lda Based Model: topic_count: 16, relevance_param: 0.4', 'Lda Based Model: topic_count: 16, relevance_param: 1.0', 'Lda Based Model: topic_count: 10, relevance_param: 0.4']
 
 
 @app.route("/models")
@@ -70,9 +67,10 @@ def topic_summary_ui():
 
 @app.route('/models/<int:model_id>/index')
 def index(model_id):
-	index = indexers[model_id].get_index()
+	index = model_objs[model_id].get_index()
 	if (index == None):
 		abort(409)
 	return index
 
-app.run(debug=True)
+if __name__ == "__main__":
+	app.run(debug=True)

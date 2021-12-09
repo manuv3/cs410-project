@@ -10,7 +10,9 @@ from matplotlib import pyplot
 from nltk import FreqDist
 from nltk.corpus import brown, reuters
 from math import log
-import re																																																						
+import re
+import pickle
+import indexer																																																			
 
 class LdaBasedModel:
 
@@ -39,21 +41,25 @@ class LdaBasedModel:
 	_background_word_max_frequency = 30
 	#****************************************************
 
-	_terms_per_topic = []
+	_terms_per_topic = None
 
 	_docs = {}
 
 	_docs_url = {}
 
-	_topics_identifier = {}
+	_topics_identifier = None
 
-	def __init__(self, build_model = False, topic_count = 16, relevance_parameter = 0.4):
-		if build_model:
-			self._model = lda.build_lda(ntop = topic_count)
-		else:
-			self._model = lda.get_prebuilt_model()
+	_index = None
+
+	def __init__(self, model_path, relevance_parameter = 0.4, topics_model_path = None):
+	
+		self._model = lda.get_prebuilt_model(model_path)
 
 		self._relevance_parameter = relevance_parameter
+
+		self._topics_identifier = {}
+
+		self._terms_per_topic = []
 
 		topic_size, vocab_size = self._model.get_topics().shape
 		self._topic_count = topic_size	
@@ -90,6 +96,14 @@ class LdaBasedModel:
 			for url in lesson_urls:
 				self._docs_url[idx] = url.rstrip()
 				idx += 1
+
+		index_builder = indexer.Indexer(self)
+		index_builder.index()
+		self._index = index_builder.get_index()		
+				
+		if topics_model_path != None:		
+			file = open(os.path.abspath('../../model/' + topics_model_path), 'wb') 
+			pickle.dump(self, file)
 
 	def get_topics(self, term_count = 10):
 		topics = []
@@ -140,6 +154,10 @@ class LdaBasedModel:
 			docs.append(doc)
 		return docs
 
+	def get_index(self):
+		return self._index
+
+
 	def _get_topics_for_doc_internal(self, doc_id):
 		return [(topic, prob) for topic, prob in sorted(self._model[self._my_corpus[doc_id]], key = lambda item: item[1], reverse = True)]	
 
@@ -156,3 +174,7 @@ class LdaBasedModel:
 		terms_in_doc = [term for term in self._terms_per_topic[topic_id]]
 		terms_in_doc = [term for term in sorted(terms_in_doc, key = lambda item: tfidf.get(self._my_dictionary.token2id[item], 0), reverse = True)][0: term_count]
 		return terms_in_doc
+
+def get_prebuilt_model(model_path):
+	filehandler = open(os.path.abspath('../../model/' + model_path), 'rb') 
+	return pickle.load(filehandler)

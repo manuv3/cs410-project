@@ -13,6 +13,8 @@ from nltk import FreqDist
 from nltk.corpus import brown, reuters
 from math import log
 import csv
+import indexer
+import pickle
 
 
 
@@ -29,7 +31,11 @@ import csv
 # Get pre built model
 #model = lda.get_prebuilt_model()
 
-model = topics.LdaBasedModel(relevance_parameter = 1.0)
+#lda_model = lda.build_lda(ntop = 10, save_model = True, model_path = 'lda_10')
+model = topics.LdaBasedModel(model_path = 'lda_10', relevance_parameter = 0.4, topics_model_path = 'model_2.obj')
+
+#print(model.get_topics())
+
 
 # Get pre-built LSI model
 #model = lsi.get_prebuilt_model()
@@ -145,7 +151,7 @@ model = topics.LdaBasedModel(relevance_parameter = 1.0)
 
 
 # Topics and contained terms, after filtering high frequency background words
-terms_per_topic = [topic['terms'] for topic in model.get_topics()]
+#terms_per_topic = [topic['terms'] for topic in model.get_topics()]
 #print(terms_per_topic)
 #pprint(terms_per_topic)
 
@@ -155,7 +161,7 @@ terms_per_topic = [topic['terms'] for topic in model.get_topics()]
 #     	wr.writerow(['topic_' + str(i), ' '.join(terms_per_topic[i])])
 
 
-print(tabulate(terms_per_topic, tablefmt='fancy_grid', showindex = 'always'))
+#print(tabulate(terms_per_topic, tablefmt='fancy_grid', showindex = 'always'))
 
 
 #Top 5 relevant phrases per document for top two topics
