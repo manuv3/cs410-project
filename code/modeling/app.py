@@ -3,7 +3,6 @@ from topics import LdaBasedModel
 import threading
 import indexer
 
-from cluster_topics import CLusterModel
 
 app = Flask(__name__)
 
@@ -15,14 +14,12 @@ def _index(model):
 	return index_builder
 
 lda_model = LdaBasedModel()
-kmeans_model = CLusterModel()
 
 lda_model_indexer = _index(lda_model)
-kmeans_model_indexer = _index(kmeans_model)
 
-indexers = [lda_model_indexer, kmeans_model_indexer]
-model_names = ['LdaBasedModel', 'KMeans_Word2Vec_clustering_model']
-model_objs = [lda_model, kmeans_model]
+indexers = [lda_model_indexer]
+model_names = ['LdaBasedModel']
+model_objs = [lda_model]
 
 
 @app.route("/models")

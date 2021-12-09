@@ -15,6 +15,8 @@ import numpy as np
 def load_data():
     data = corpus._tokenize(corpus.get_raw_corpus_path())
     data = [x for x in data]
+    print(data[0])
+    print(len(data))
     X_train = pd.DataFrame(data)
     return X_train
 
@@ -97,3 +99,5 @@ class CLusterModel(LdaBasedModel):
         arr[cur_topic.item()] = (cur_topic.item(), 1)
         return [(topic, prob) for topic, prob in
                 sorted(arr, key=lambda item: item[1], reverse=True)]
+
+model = CLusterModel()

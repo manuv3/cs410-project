@@ -48,12 +48,9 @@ def test_kmeans():
     X_train_wtv = wtv_vect.transform(sample)
     print(X_train_wtv.shape)
 
+    y_km = km.fit_predict(X_train_wtv)
+    df = pd.DataFrame({'docs' : [x for x in sample.values if x is not None], 'topic_cluster' :y_km})
+    print(df)
 
-
-
-y_km = km.fit_predict(X_train_wtv)
-df = pd.DataFrame({'docs' : [x for x in sample.values if x is not None], 'topic_cluster' :y_km})
-print(df)
-
-pickle.dump(km, open(os.path.join(_model_path, 'kmeans'), 'wb'))
+    pickle.dump(km, open(os.path.join(_model_path, 'kmeans'), 'wb'))
 
