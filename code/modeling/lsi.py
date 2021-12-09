@@ -6,7 +6,7 @@ import os
 from gensim.models.coherencemodel import CoherenceModel
 from matplotlib import pyplot
 
-_model_path = os.path.abspath('../../tmp/lsi')
+_model_path = os.path.abspath('../../data/lsi')
 
 num_topics = 20
 

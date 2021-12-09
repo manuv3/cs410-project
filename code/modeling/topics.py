@@ -9,7 +9,8 @@ from gensim.models.coherencemodel import CoherenceModel
 from matplotlib import pyplot
 from nltk import FreqDist
 from nltk.corpus import brown, reuters
-from math import log																																																							
+from math import log
+import re																																																						
 
 class LdaBasedModel:
 
@@ -42,6 +43,8 @@ class LdaBasedModel:
 
 	_docs = {}
 
+	_docs_url = {}
+
 	_topics_identifier = {}
 
 	def __init__(self, build_model = False, topic_count = 16, relevance_parameter = 0.4):
@@ -51,7 +54,9 @@ class LdaBasedModel:
 			self._model = lda.get_prebuilt_model()
 
 		self._relevance_parameter = relevance_parameter
-		self._topic_count = topic_count	
+
+		topic_size, vocab_size = self._model.get_topics().shape
+		self._topic_count = topic_size	
 
 		# Background language models
 		_brown_text = brown.words()
@@ -80,6 +85,11 @@ class LdaBasedModel:
 			# Update doc names index
 			self._docs[idx] = doc_name
 			idx += 1
+		with open('../../data/lesson_urls.txt', 'r') as lesson_urls:
+			idx = 0
+			for url in lesson_urls:
+				self._docs_url[idx] = url.rstrip()
+				idx += 1
 
 	def get_topics(self, term_count = 10):
 		topics = []
@@ -126,6 +136,7 @@ class LdaBasedModel:
 			doc = {}
 			doc['id'] = doc_id
 			doc['name'] = doc_name
+			doc['url'] = self._docs_url[doc_id]
 			docs.append(doc)
 		return docs
 
@@ -134,7 +145,11 @@ class LdaBasedModel:
 
 	def _get_terms_for_doc_topic(self, doc_id, topic_id, term_count):
 		doc_name = self._docs[doc_id]
-		bow = self._my_dictionary.doc2bow([token for token in corpus._tokenize(os.path.join(corpus.get_raw_corpus_path(), doc_name))][0])
+		tokens = [token for token in corpus._tokenize(os.path.join(corpus.get_raw_corpus_path(), doc_name))][0]
+		slide_name = os.path.join(corpus.get_raw_corpus_path(True), re.sub('.txt', '.json', doc_name))
+		if os.path.isfile(slide_name):
+			tokens.extend([token for token in corpus._tokenize(os.path.join(corpus.get_raw_corpus_path(True), re.sub('.txt', '.json', doc_name)))][0])
+		bow = self._my_dictionary.doc2bow(tokens)
 		tfidf = {}
 		for term_id, score in self._my_tfidf_model[bow]:
 			tfidf[term_id] = score

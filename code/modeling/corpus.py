@@ -3,7 +3,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize.punkt import PunktSentenceTokenizer
-from gensim.models.phrases import Phrases
+from gensim.models.phrases import Phrases, ENGLISH_CONNECTOR_WORDS
 from gensim.corpora import Dictionary, MmCorpus
 from gensim.models import TfidfModel
 from gensim.parsing.preprocessing import STOPWORDS
@@ -13,24 +13,14 @@ import os
 import re
 import json
 
-ENGLISH_CONNECTOR_WORDS = frozenset(
-    " a an the "  # articles; we never care about these in MWEs
-    " for of with without at from to in on by "  # prepositions; incomplete on purpose, to minimize FNs
-    " and or "  # conjunctions; incomplete on purpose, to minimize FNs
-    .split()
-)
-
-CORPUS_SPECIFIC_STOPWORDS = {'lecture', 'sound', 'music'}
-
 nltk.data.path = [os.path.abspath('../../data/nltk_data')] + nltk.data.path
 _tokenizer = RegexpTokenizer(r'\w+')
 _sentence_tokenizer = PunktSentenceTokenizer()
 _lemmatizer = WordNetLemmatizer()
-_local_docs_path = os.path.abspath('../../data/transcripts')
-_dictionary_path = os.path.abspath('../../tmp/dictionary.dict')
-_corpus_path = os.path.abspath('../../tmp/corpus.mm')
-_tfidf_model_path = os.path.abspath('../../tmp/tfidf')
-_phrases_path = os.path.abspath('../../tmp/phrases.pkl')
+_dictionary_path = os.path.abspath('../../model/dictionary.dict')
+_corpus_path = os.path.abspath('../../model/corpus.mm')
+_tfidf_model_path = os.path.abspath('../../model/tfidf')
+_phrases_path = os.path.abspath('../../model/phrases.pkl')
 _data_path = os.path.abspath('../../data')
 
 def _get_docs(path):
@@ -46,17 +36,7 @@ def _get_doc(file):
 			if file.endswith('.json'):
 				return ' '.join([value for key, value in json.loads(doc.read()).items() if key != '0'])
 			else:
-				return doc.read()
-def slide_words(path):
-	with open(path) as file:
-		data = json.loads(file)
-		last_slide = data[len(data) - 1]
-		if 'Additional Reading' in last_slide:
-			last_slide = ''
-		last_slide = last_slide.replace('Topics Covered in This Course', '')
-		last_slide = last_slide.replace('Summary', '')
-		data[len(data) - 1] = last_slide
-		yield ' '.join([value for key, value in data.items() if key != '0'])
+				return doc.read()	
 
 def _tokenize_doc(doc):
 	doc = re.sub('\n', ' ', doc)
@@ -64,7 +44,6 @@ def _tokenize_doc(doc):
 	doc = _tokenizer.tokenize(doc)  # Split into words.	
 	doc = [token for token in doc if token not in stopwords.words('english')]
 	doc = [token for token in doc if token not in STOPWORDS]
-	doc = [token for token in doc if token not in CORPUS_SPECIFIC_STOPWORDS]
 	doc = [token for token in doc if not token.isnumeric()]
 	doc = [token for token in doc if len(token) > 2]
 	return [_lemmatizer.lemmatize(topic) for topic in doc]
@@ -117,7 +96,7 @@ def build_corpus(build_phrases = True, min_colocation_count = 5):
 		fp.seek(0)
 		MmCorpus.serialize(_corpus_path, _generate_corpus(fp, dictionary))
 		fp.seek(0)
-		TfidfModel(_generate_corpus(fp, dictionary)).save(_tfidf_model_path)
+		TfidfModel(get_prebuilt_corpus()).save(_tfidf_model_path)
 
 
 def get_prebuilt_dictionary():
@@ -132,6 +111,8 @@ def get_prebuilt_phrases():
 def get_tfidf_model():
 	return TfidfModel.load(_tfidf_model_path)
 
-def get_raw_corpus_path():
-	return _local_docs_path
-
+def get_raw_corpus_path(slides = False):
+	if slides:
+		return os.path.join(_data_path, 'slides_raw_text')
+	else:	
+		return os.path.join(_data_path, 'transcripts')
