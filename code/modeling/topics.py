@@ -53,7 +53,9 @@ class LdaBasedModel:
 			self._model = lda.get_prebuilt_model()
 
 		self._relevance_parameter = relevance_parameter
-		self._topic_count = topic_count	
+
+		topic_size, vocab_size = self._model.get_topics().shape
+		self._topic_count = topic_size	
 
 		# Background language models
 		_brown_text = brown.words()

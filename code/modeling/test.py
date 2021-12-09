@@ -15,9 +15,9 @@ from math import log
 import csv																																																																									
 
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.WARN)
+#logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.WARN)
 
-_corpus_path = os.path.abspath('../../data/transcripts')
+#_corpus_path = os.path.abspath('../../data/transcripts')
 
 # Build model without building corpus again
 #model = lda.build_lda(ntop=15)
@@ -26,23 +26,25 @@ _corpus_path = os.path.abspath('../../data/transcripts')
 #model = lda.build_lda(build_corpus= True, ntop = 20)
 
 # Get pre built model
-model = lda.get_prebuilt_model()
+#model = lda.get_prebuilt_model()
+
+model = topics.LdaBasedModel(relevance_parameter = 1.0)
 
 # Get pre-built LSI model
 #model = lsi.get_prebuilt_model()
 
 # Get pre built corpus
-my_corpus = corpus.get_prebuilt_corpus()
+#my_corpus = corpus.get_prebuilt_corpus()
 
 # Get pre-built phrases
-my_phrases = corpus.get_prebuilt_phrases()
+#my_phrases = corpus.get_prebuilt_phrases()
 
 # Get pre-built dictionary
-my_dictionary = corpus.get_prebuilt_dictionary()
+#my_dictionary = corpus.get_prebuilt_dictionary()
 #temp = my_dictionary[0]  # This is only to "load" the dictionary.
 #id2word = my_dictionary.id2token
 
-my_tfidf_model = corpus.get_tfidf_model()
+#my_tfidf_model = corpus.get_tfidf_model()
 
 
 # top_topics = model.top_topics(corpus.get_prebuilt_corpus())
@@ -81,11 +83,11 @@ my_tfidf_model = corpus.get_tfidf_model()
 # pyplot.show()
 
 
-brown_text = brown.words()
-brown_fdist = FreqDist(w.lower() for w in brown_text)
+#brown_text = brown.words()
+#brown_fdist = FreqDist(w.lower() for w in brown_text)
 
-reuters_text = reuters.words()
-reuters_fdist = FreqDist(w.lower() for w in brown_text)
+#reuters_text = reuters.words()
+#reuters_fdist = FreqDist(w.lower() for w in brown_text)
 
 
 #topics_per_document = {}
@@ -120,8 +122,8 @@ reuters_fdist = FreqDist(w.lower() for w in brown_text)
 
 #Relevant phrases per topic
 # filter_size = 15
-topic_matrix = model.get_topics()
-topic_size, vocab_size = topic_matrix.shape
+#topic_matrix = model.get_topics()
+#topic_size, vocab_size = topic_matrix.shape
 # phrases_per_topic = []
 # for i in range(topic_size):
 # 	zero_order_relevance_scores = {}
@@ -142,7 +144,7 @@ topic_size, vocab_size = topic_matrix.shape
 
 
 # Topics and contained terms, after filtering high frequency background words
-terms_per_topic = [topic_terms[0:10] for topic_terms in topics.get_topics()]
+terms_per_topic = [topic['terms'] for topic in model.get_topics()]
 #print(terms_per_topic)
 #pprint(terms_per_topic)
 
@@ -156,6 +158,10 @@ print(tabulate(terms_per_topic, tablefmt='fancy_grid', showindex = 'always'))
 
 
 #Top 5 relevant phrases per document for top two topics
+
+#pprint(topics.get_topics_per_doc)
+
+
 # file_names = [files for root, dirs, files in os.walk(_corpus_path)][0]
 # output = {}
 # idx = 0
@@ -195,3 +201,5 @@ print(tabulate(terms_per_topic, tablefmt='fancy_grid', showindex = 'always'))
 # 	val = '\n'.join(value)
 # 	print('{} ==> {}'.format(key, val))
 # 	print('================================')
+
+

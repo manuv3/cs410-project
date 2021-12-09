@@ -18,10 +18,10 @@ _tokenizer = RegexpTokenizer(r'\w+')
 _sentence_tokenizer = PunktSentenceTokenizer()
 _lemmatizer = WordNetLemmatizer()
 _local_docs_path = os.path.abspath('../../data/transcripts')
-_dictionary_path = os.path.abspath('../../tmp/dictionary.dict')
-_corpus_path = os.path.abspath('../../tmp/corpus.mm')
-_tfidf_model_path = os.path.abspath('../../tmp/tfidf')
-_phrases_path = os.path.abspath('../../tmp/phrases.pkl')
+_dictionary_path = os.path.abspath('../../model/dictionary.dict')
+_corpus_path = os.path.abspath('../../model/corpus.mm')
+_tfidf_model_path = os.path.abspath('../../model/tfidf')
+_phrases_path = os.path.abspath('../../model/phrases.pkl')
 _data_path = os.path.abspath('../../data')
 
 def _get_docs(path):
@@ -97,7 +97,7 @@ def build_corpus(build_phrases = True, min_colocation_count = 5):
 		fp.seek(0)
 		MmCorpus.serialize(_corpus_path, _generate_corpus(fp, dictionary))
 		fp.seek(0)
-		TfidfModel(_generate_corpus(fp, dictionary)).save(_tfidf_model_path)
+		TfidfModel(get_prebuilt_corpus()).save(_tfidf_model_path)
 
 
 def get_prebuilt_dictionary():

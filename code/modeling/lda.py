@@ -6,7 +6,7 @@ import os
 from gensim.models.coherencemodel import CoherenceModel
 from matplotlib import pyplot
 
-_model_path = os.path.abspath('../../tmp/lda')
+_model_path = os.path.abspath('../../model/lda')
 
 num_topics = 20
 
@@ -47,21 +47,3 @@ def build_lda(build_corpus = False, ntop = num_topics, save_model = True):
 
 def get_prebuilt_model():
 	return LdaModel.load(_model_path)
-
-
-#for ntop in range(10, 26):
-#cm_11 = CoherenceModel(model=build_lda(ntop = 11, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
-#cm_18 = CoherenceModel(model=build_lda(ntop = 18, save_model = False), corpus=corpus.get_prebuilt_corpus(), coherence='u_mass')
-
-
-#pyplot.plot(range(10, 26), coherence)
-#pyplot.show()
-
-
-# lda_11 = build_lda(ntop = 11)
-# top_topics = lda_11.top_topics(corpus.get_prebuilt_corpus())
-# # Average topic coherence is the sum of topic coherences of all topics, divided by the number of topics.
-# avg_topic_coherence = sum([t[1] for t in top_topics]) / 11
-# print('Average topic coherence: %.4f.' % avg_topic_coherence)
-
-# pprint(top_topics)
