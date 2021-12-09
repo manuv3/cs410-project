@@ -53,7 +53,12 @@ def topics_for_document(model_id, doc_id):
 
 @app.route('/models/<int:model_id>/documents/<int:doc_id>/ui')
 def document_ui(model_id, doc_id):
-	return render_template('lesson_page.html', model_id = model_id, doc_id = doc_id)
+	doc = list(filter(lambda item: item['id'] == doc_id, model_objs[model_id].get_docs()))
+	if len(doc) > 0:
+		return render_template('lesson_page.html', model_id = model_id, doc_id = doc_id, doc_name = doc[0]['name'], doc_url = doc[0]['url'])
+	else:
+		print('Invalid doc id {}'.format(doc_id))
+		abort(400)
 
 @app.route('/models/summary/ui')
 def topic_summary_ui():
