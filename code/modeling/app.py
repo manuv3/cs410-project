@@ -3,6 +3,8 @@ from topics import LdaBasedModel
 import threading
 import indexer
 
+from cluster_topics import CLusterModel
+
 app = Flask(__name__)
 
 def _index(model):
@@ -13,12 +15,15 @@ def _index(model):
 	return index_builder
 
 lda_model = LdaBasedModel()
+kmeans_model = CLusterModel()
 
 lda_model_indexer = _index(lda_model)
+kmeans_model_indexer = _index(kmeans_model)
 
-indexers = [lda_model_indexer]
-model_names = ['LdaBasedModel']
-model_objs = [lda_model]
+indexers = [lda_model_indexer, kmeans_model_indexer]
+model_names = ['LdaBasedModel', 'KMeans_Word2Vec_clustering_model']
+model_objs = [lda_model, kmeans_model]
+
 
 @app.route("/models")
 def models():
@@ -29,12 +34,14 @@ def models():
 		model_obj['id'] = idx
 		model_obj['name'] = model
 		models_arr.append(model_obj)
+		idx += 1
 	return jsonify(models_arr)
 
 @app.route("/models/<int:model_id>/topics")
 def topics(model_id):
 	term_count = int(request.args.get('terms', '10'))
-	return jsonify(model_objs[model_id].get_topics(term_count = term_count))
+	temp = model_objs[model_id].get_topics(term_count = term_count)
+	return jsonify(temp)
 
 @app.route("/models/<int:model_id>/topics/<int:topic_id>")
 def terms_for_topic(model_id, topic_id):
@@ -65,3 +72,5 @@ def index(model_id):
 	if (index == None):
 		abort(409)
 	return index
+
+app.run(debug=True)

@@ -7,9 +7,10 @@ from nltk.corpus import brown, reuters
 from math import log
 import word_to_vec
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
 from topics import LdaBasedModel
 from word_to_vec import WordVecVectorizer, get_prebuilt_word2vec
-
+import numpy as np
 
 def load_data():
     data = corpus._tokenize(corpus._local_docs_path)
@@ -61,13 +62,13 @@ class CLusterModel(LdaBasedModel):
 
         # Topics and contained terms, after filtering high frequency background words
         words_in_topic = defaultdict(Counter)
-
         for idx, topic in enumerate(self._model.predict(X_train_wtv)):
-            self._topics_identifier[topic] = 'topic_' + str(topic + 1)
+            self._topics_identifier[topic.item()] = 'topic_' + str(topic + 1)
             for word in X_train[:idx + 1].values[0]:
                 if word:
                     if (_brown_fdist.get(word, 0) < self._background_word_max_frequency and _reuters_fdist.get(word, 0) < self._background_word_max_frequency):
-                        words_in_topic[topic][word] += 1
+                        words_in_topic[topic.item()][word] += 1
+
 
         for topic, counter in words_in_topic.items():
             total_count = sum(counter.values())
@@ -84,7 +85,7 @@ class CLusterModel(LdaBasedModel):
         file_names = open('../../tmp/file_order.txt', 'r').read().splitlines()
         idx = 0
         for doc in self._my_corpus:
-            doc_name = file_names[idx]
+            doc_name = file_names[idx].replace('"', '')
             # Update doc names index
             self._docs[idx] = doc_name
             idx += 1
@@ -93,8 +94,6 @@ class CLusterModel(LdaBasedModel):
     def _get_topics_for_doc_internal(self, doc_id):
         arr = [(i, 0) for i in range(self._topic_count)]
         cur_topic = self._model.predict(self.X_train_wtv)[doc_id]
-        arr[cur_topic] = (cur_topic, 1)
+        arr[cur_topic.item()] = (cur_topic.item(), 1)
         return [(topic, prob) for topic, prob in
                 sorted(arr, key=lambda item: item[1], reverse=True)]
-
-model = CLusterModel()
