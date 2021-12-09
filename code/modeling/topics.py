@@ -9,7 +9,8 @@ from gensim.models.coherencemodel import CoherenceModel
 from matplotlib import pyplot
 from nltk import FreqDist
 from nltk.corpus import brown, reuters
-from math import log																																																							
+from math import log
+import re																																																						
 
 class LdaBasedModel:
 
@@ -144,7 +145,11 @@ class LdaBasedModel:
 
 	def _get_terms_for_doc_topic(self, doc_id, topic_id, term_count):
 		doc_name = self._docs[doc_id]
-		bow = self._my_dictionary.doc2bow([token for token in corpus._tokenize(os.path.join(corpus.get_raw_corpus_path(), doc_name))][0])
+		tokens = [token for token in corpus._tokenize(os.path.join(corpus.get_raw_corpus_path(), doc_name))][0]
+		slide_name = os.path.join(corpus.get_raw_corpus_path(True), re.sub('.txt', '.json', doc_name))
+		if os.path.isfile(slide_name):
+			tokens.extend([token for token in corpus._tokenize(os.path.join(corpus.get_raw_corpus_path(True), re.sub('.txt', '.json', doc_name)))][0])
+		bow = self._my_dictionary.doc2bow(tokens)
 		tfidf = {}
 		for term_id, score in self._my_tfidf_model[bow]:
 			tfidf[term_id] = score

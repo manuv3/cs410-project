@@ -17,7 +17,6 @@ nltk.data.path = [os.path.abspath('../../data/nltk_data')] + nltk.data.path
 _tokenizer = RegexpTokenizer(r'\w+')
 _sentence_tokenizer = PunktSentenceTokenizer()
 _lemmatizer = WordNetLemmatizer()
-_local_docs_path = os.path.abspath('../../data/transcripts')
 _dictionary_path = os.path.abspath('../../model/dictionary.dict')
 _corpus_path = os.path.abspath('../../model/corpus.mm')
 _tfidf_model_path = os.path.abspath('../../model/tfidf')
@@ -112,5 +111,8 @@ def get_prebuilt_phrases():
 def get_tfidf_model():
 	return TfidfModel.load(_tfidf_model_path)
 
-def get_raw_corpus_path():
-	return _local_docs_path
+def get_raw_corpus_path(slides = False):
+	if slides:
+		return os.path.join(_data_path, 'slides_raw_text')
+	else:	
+		return os.path.join(_data_path, 'transcripts')
