@@ -5,5 +5,4 @@ tabulate
 numpy
 pyLDAvis
 flask
-pickle
 pandas

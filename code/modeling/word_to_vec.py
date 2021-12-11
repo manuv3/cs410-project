@@ -8,7 +8,7 @@ import pandas as pd
 
 from sklearn.cluster import KMeans
 
-_model_path = os.path.abspath('../../data/models')
+_model_path = os.path.abspath('../../model')
 
 def build_word2vec():
     data = corpus._tokenize(corpus._local_docs_path)

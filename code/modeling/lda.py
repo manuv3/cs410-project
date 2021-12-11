@@ -10,7 +10,7 @@ _model_path = os.path.abspath('../../model/lda')
 
 num_topics = 20
 
-def build_lda(build_corpus = False, ntop = num_topics, save_model = False, model_path = None):
+def build_lda(build_corpus = False, ntop = num_topics, model_path = None):
 	print('Building lda model')
 	if build_corpus:
 		corpus.build_corpus()
@@ -40,7 +40,7 @@ def build_lda(build_corpus = False, ntop = num_topics, save_model = False, model
 	    eval_every = eval_every
 	)
 
-	if save_model and model_path != None:
+	if model_path != None:
 		lda.save(os.path.abspath('../../model/' + model_path))
 
 	return lda
