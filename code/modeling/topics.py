@@ -43,9 +43,9 @@ class LdaBasedModel:
 
 	_terms_per_topic = None
 
-	_docs = {}
+	_docs = None
 
-	_docs_url = {}
+	_docs_url = None
 
 	_topics_identifier = None
 
@@ -84,6 +84,8 @@ class LdaBasedModel:
 			self._terms_per_topic.append([word for word, relevance in sorted(words, key = lambda item: item[1], reverse = True)][0: self._num_terms_per_topic_after_processing])
 
 		# Build terms per document
+		self._docs = {}
+		self._docs_url = {}
 		file_names = [files for root, dirs, files in os.walk(corpus.get_raw_corpus_path())][0]
 		idx = 0
 		for doc in self._my_corpus:
