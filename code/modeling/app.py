@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template, abort
 from topics import LdaBasedModel, get_prebuilt_model
 import threading
-from model_factory import Factory
+#from model_factory import Factory
 
 
 app = Flask(__name__)
